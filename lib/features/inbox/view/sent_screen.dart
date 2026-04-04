@@ -4,15 +4,15 @@ import 'package:go_router/go_router.dart';
 
 import '../../../core/shared/constants/app_routes.dart';
 import '../../../core/shared/theme/app_colors.dart';
-import '../provider/inbox_provider.dart';
+import '../provider/sent_provider.dart';
 import 'email_list_tile.dart';
 
-class InboxScreen extends ConsumerWidget {
-  const InboxScreen({super.key});
+class SentScreen extends ConsumerWidget {
+  const SentScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final inboxAsync = ref.watch(inboxProvider);
+    final sentAsync = ref.watch(sentProvider);
     final tt = Theme.of(context).textTheme;
 
     return Scaffold(
@@ -23,28 +23,26 @@ class InboxScreen extends ConsumerWidget {
             floating: true,
             backgroundColor: AppColors.scaffoldBackground,
             surfaceTintColor: AppColors.transparent,
-            title: Text('Inbox',
-                style: tt.titleLarge
-                    ?.copyWith(fontWeight: FontWeight.w700)),
-            actions: [
-              IconButton(
-                icon: const Icon(Icons.search_rounded),
-                onPressed: () {},
-              ),
-            ],
+            title: Text(
+              'Sent',
+              style: tt.titleLarge?.copyWith(fontWeight: FontWeight.w700),
+            ),
           ),
-          inboxAsync.when(
+          sentAsync.when(
             loading: () => const SliverFillRemaining(
               child: Center(child: CircularProgressIndicator()),
             ),
             error: (e, _) => SliverFillRemaining(
               child: Center(
-                  child: Text('Failed to load inbox\n$e',
-                      textAlign: TextAlign.center)),
+                child: Text(
+                  'Failed to load sent\n$e',
+                  textAlign: TextAlign.center,
+                ),
+              ),
             ),
             data: (emails) => emails.isEmpty
                 ? const SliverFillRemaining(
-                    child: Center(child: Text('Your inbox is empty')),
+                    child: Center(child: Text('No sent emails')),
                   )
                 : SliverList(
                     delegate: SliverChildBuilderDelegate(
@@ -52,13 +50,10 @@ class InboxScreen extends ConsumerWidget {
                         final email = emails[index];
                         return EmailListTile(
                           email: email,
-                          onTap: () {
-                            ref
-                                .read(inboxProvider.notifier)
-                                .markRead(email.id);
-                            context.go(AppRoutes.emailDetail,
-                                extra: email);
-                          },
+                          onTap: () => context.go(
+                            AppRoutes.emailDetail,
+                            extra: email,
+                          ),
                         );
                       },
                       childCount: emails.length,

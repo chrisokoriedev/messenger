@@ -14,6 +14,8 @@ class AppTextField extends StatelessWidget {
     this.validator,
     this.keyboardType,
     this.textInputAction,
+    this.maxLines,
+    this.minLines,
   });
 
   final String label;
@@ -26,16 +28,21 @@ class AppTextField extends StatelessWidget {
   final String? Function(String?)? validator;
   final TextInputType? keyboardType;
   final TextInputAction? textInputAction;
+  final int? maxLines;
+  final int? minLines;
 
   @override
   Widget build(BuildContext context) {
+    final isMultiline = maxLines != null && maxLines! > 1;
     return TextFormField(
       controller: controller,
-      obscureText: obscureText,
+      obscureText: isMultiline ? false : obscureText,
       onChanged: onChanged,
       validator: validator,
       keyboardType: keyboardType,
       textInputAction: textInputAction,
+      maxLines: isMultiline ? maxLines : 1,
+      minLines: isMultiline ? minLines : null,
       style: TextStyle(fontSize: 14.sp),
       decoration: InputDecoration(
         labelText: label,

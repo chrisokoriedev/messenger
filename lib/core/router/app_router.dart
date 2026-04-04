@@ -6,6 +6,12 @@ import '../shared/constants/app_routes.dart';
 import '../shared/theme/app_colors.dart';
 import '../../features/auth/view/sign_in_screen.dart';
 import '../../features/inbox/view/inbox_screen.dart';
+import '../../features/inbox/view/sent_screen.dart';
+import '../../features/inbox/view/drafts_screen.dart';
+import '../../features/inbox/view/email_detail_screen.dart';
+import '../../features/compose/view/compose_screen.dart';
+import '../../features/profile/view/profile_screen.dart';
+import '../../core/domain/email.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Router Provider
@@ -62,8 +68,8 @@ final List<RouteBase> _routes = [
                 path: 'detail',
                 name: AppRouteNames.emailDetail,
                 builder: (context, state) {
-                  final emailId = state.extra as String? ?? '';
-                  return _Placeholder('Email Detail — $emailId');
+                  final email = state.extra as Email;
+                  return EmailDetailScreen(email: email);
                 },
               ),
             ],
@@ -77,7 +83,7 @@ final List<RouteBase> _routes = [
           GoRoute(
             path: AppRoutes.sent,
             name: AppRouteNames.sent,
-            builder: (context, state) => const _Placeholder('Sent'),
+            builder: (context, state) => const SentScreen(),
           ),
         ],
       ),
@@ -88,7 +94,7 @@ final List<RouteBase> _routes = [
           GoRoute(
             path: AppRoutes.drafts,
             name: AppRouteNames.drafts,
-            builder: (context, state) => const _Placeholder('Drafts'),
+            builder: (context, state) => const DraftsScreen(),
           ),
         ],
       ),
@@ -99,7 +105,7 @@ final List<RouteBase> _routes = [
           GoRoute(
             path: AppRoutes.profile,
             name: AppRouteNames.profile,
-            builder: (context, state) => const _Placeholder('Profile'),
+            builder: (context, state) => const ProfileScreen(),
           ),
         ],
       ),
@@ -112,7 +118,7 @@ final List<RouteBase> _routes = [
     name: AppRouteNames.compose,
     pageBuilder: (context, state) => CustomTransitionPage(
       key: state.pageKey,
-      child: const _Placeholder('Compose Email'),
+      child: const ComposeScreen(),
       transitionsBuilder: (context, animation, _, child) => SlideTransition(
         position: Tween(begin: const Offset(0, 1), end: Offset.zero).animate(
           CurvedAnimation(parent: animation, curve: Curves.easeOutCubic),
