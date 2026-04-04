@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:messenger/core/domain/email.dart';
 
 import '../../../core/shared/app_extension.dart';
 import '../../../core/shared/theme/app_colors.dart';
 
 class EmailListTile extends StatelessWidget {
-  const EmailListTile({
-    super.key,
-    required this.email,
-    required this.onTap,
-  });
+  const EmailListTile({super.key, required this.email, required this.onTap});
 
   final Email email;
   final VoidCallback onTap;
@@ -36,16 +33,17 @@ class EmailListTile extends StatelessWidget {
               radius: 20,
               backgroundColor: AppColors.brandNavy,
               child: Text(
-                email.sender.isNotEmpty
-                    ? email.sender[0].toUpperCase()
-                    : '?',
+                email.sender.isNotEmpty ? email.sender[0].toUpperCase() : '?',
                 style: tt.labelMedium?.copyWith(
-                    color: AppColors.white, fontWeight: FontWeight.w600),
+                  color: AppColors.white,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
-            const SizedBox(width: 14),
+            14.horizontalSpace,
             Expanded(
               child: Column(
+                spacing: 2.spMin,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
@@ -76,22 +74,18 @@ class EmailListTile extends StatelessWidget {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 2),
                   Text(
                     email.subject,
                     style: tt.bodySmall?.copyWith(
-                      fontWeight:
-                          unread ? FontWeight.w600 : FontWeight.w500,
+                      fontWeight: unread ? FontWeight.w600 : FontWeight.w500,
                       color: AppColors.textPrimary,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  const SizedBox(height: 2),
                   Text(
                     email.preview,
-                    style:
-                        tt.bodySmall?.copyWith(color: AppColors.textMuted),
+                    style: tt.bodySmall?.copyWith(color: AppColors.textMuted),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
