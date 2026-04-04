@@ -6,6 +6,7 @@ import 'package:messenger/core/shared/widgets/drawer_tile.dart';
 import '../shared/theme/app_colors.dart';
 import '../../features/auth/provider/auth_provider.dart';
 import '../../features/auth/domain/user.dart';
+
 class AppShell extends ConsumerWidget {
   const AppShell({super.key, required this.navigationShell});
 
@@ -43,7 +44,7 @@ class AppShell extends ConsumerWidget {
         ],
       ),
       drawer: Drawer(
-        width: MediaQuery.of(context).size.width,
+        width: MediaQuery.of(context).size.width * 0.6,
         backgroundColor: AppColors.white,
         surfaceTintColor: AppColors.transparent,
         child: SafeArea(
