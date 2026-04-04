@@ -66,16 +66,6 @@ final List<RouteBase> _routes = [
             path: AppRoutes.inbox,
             name: AppRouteNames.inbox,
             builder: (context, state) => const InboxScreen(),
-            routes: [
-              GoRoute(
-                path: 'detail',
-                name: AppRouteNames.emailDetail,
-                builder: (context, state) {
-                  final email = state.extra as Email;
-                  return EmailDetailScreen(email: email);
-                },
-              ),
-            ],
           ),
         ],
       ),
@@ -110,6 +100,14 @@ final List<RouteBase> _routes = [
         ],
       ),
     ],
+  ),
+  GoRoute(
+    path: AppRoutes.emailDetail,
+    name: AppRouteNames.emailDetail,
+    builder: (context, state) {
+      final email = state.extra as Email;
+      return EmailDetailScreen(email: email);
+    },
   ),
   GoRoute(
     path: AppRoutes.compose,
