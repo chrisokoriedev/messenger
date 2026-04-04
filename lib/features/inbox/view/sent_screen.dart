@@ -38,7 +38,7 @@ class SentScreen extends ConsumerWidget {
                         final email = emails[index];
                         return EmailListTile(
                           email: email,
-                          onTap: () => context.go(
+                          onTap: () => context.push(
                             AppRoutes.emailDetail,
                             extra: email,
                           ),

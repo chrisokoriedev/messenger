@@ -48,7 +48,7 @@ class InboxScreen extends ConsumerWidget {
                         email: email,
                         onTap: () {
                           ref.read(inboxProvider.notifier).markRead(email.id);
-                          context.go(AppRoutes.emailDetail, extra: email);
+                          context.push(AppRoutes.emailDetail, extra: email);
                         },
                       );
                     }, childCount: emails.length),

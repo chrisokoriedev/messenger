@@ -83,8 +83,6 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: AppColors.white,
-        surfaceTintColor: AppColors.transparent,
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.close_rounded),
