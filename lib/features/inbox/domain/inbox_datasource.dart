@@ -1,4 +1,4 @@
-import '../../core/domain/email.dart';
+import '../../../core/domain/email.dart';
 
 // ── EmailModel ────────────────────────────────────────────────────────────────
 
@@ -122,6 +122,16 @@ class InboxDatasource {
   Future<List<EmailModel>> getInbox() async {
     await Future.delayed(const Duration(milliseconds: 600));
     return List.unmodifiable(_emails);
+  }
+
+  Future<List<EmailModel>> getSent() async {
+    await Future.delayed(const Duration(milliseconds: 400));
+    return List.unmodifiable(kMockSentEmails);
+  }
+
+  Future<List<EmailModel>> getDrafts() async {
+    await Future.delayed(const Duration(milliseconds: 400));
+    return List.unmodifiable(kMockDraftEmails);
   }
 
   Future<EmailModel> markRead({required String id, required bool isRead}) async {

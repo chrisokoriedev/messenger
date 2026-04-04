@@ -5,7 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../shared/constants/app_routes.dart';
 import '../shared/theme/app_colors.dart';
 import '../../features/auth/view/sign_in_screen.dart';
-import '../../features/inbox/inbox_screen.dart';
+import '../../features/inbox/view/inbox_screen.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Router Provider

@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../core/shared/constants/app_routes.dart';
-import '../../core/shared/theme/app_colors.dart';
+import '../../../core/shared/constants/app_routes.dart';
+import '../../../core/shared/theme/app_colors.dart';
+import '../provider/inbox_provider.dart';
 import 'email_list_tile.dart';
-import 'inbox_provider.dart';
 
 class InboxScreen extends ConsumerWidget {
   const InboxScreen({super.key});

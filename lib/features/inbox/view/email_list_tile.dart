@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:messenger/core/domain/email.dart';
 
-import '../../core/shared/app_extension.dart';
-import '../../core/shared/theme/app_colors.dart';
+import '../../../core/shared/app_extension.dart';
+import '../../../core/shared/theme/app_colors.dart';
 
 class EmailListTile extends StatelessWidget {
   const EmailListTile({
@@ -98,18 +98,6 @@ class EmailListTile extends StatelessWidget {
                 ],
               ),
             ),
-            if (unread)
-              Padding(
-                padding: const EdgeInsets.only(top: 4, left: 6),
-                child: Container(
-                  width: 8,
-                  height: 8,
-                  decoration: const BoxDecoration(
-                    color: AppColors.brandNavy,
-                    shape: BoxShape.circle,
-                  ),
-                ),
-              ),
           ],
         ),
       ),

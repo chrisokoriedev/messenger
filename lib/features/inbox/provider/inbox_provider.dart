@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../core/domain/email.dart';
-import '../../core/providers/main_provider.dart';
+import '../../../core/domain/email.dart';
+import '../../../core/providers/main_provider.dart';
 
 class InboxNotifier extends AsyncNotifier<List<Email>> {
   @override
