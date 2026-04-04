@@ -105,7 +105,10 @@ final List<RouteBase> _routes = [
     name: AppRouteNames.compose,
     pageBuilder: (context, state) => CustomTransitionPage(
       key: state.pageKey,
-      child: const ComposeScreen(),
+    child: ComposeScreen(
+          initialTo: (state.extra as Map?)?['to'] as String?,
+          initialSubject: (state.extra as Map?)?['subject'] as String?,
+        ),
       transitionsBuilder: (context, animation, _, child) => SlideTransition(
         position: Tween(begin: const Offset(0, 1), end: Offset.zero).animate(
           CurvedAnimation(parent: animation, curve: Curves.easeOutCubic),

@@ -33,6 +33,12 @@ class InboxNotifier extends AsyncNotifier<List<Email>> {
         .markRead(id: id, isRead: true);
     state = AsyncData([for (final e in emails) if (e.id == id) updated else e]);
   }
+
+  Future<void> deleteEmail(String id) async {
+    await ref.read(inboxDatasourceProvider).deleteEmail(id);
+    final emails = state.valueOrNull ?? [];
+    state = AsyncData(emails.where((e) => e.id != id).toList());
+  }
 }
 
 final inboxProvider =

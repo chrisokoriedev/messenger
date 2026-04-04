@@ -142,4 +142,9 @@ class InboxDatasource {
     _emails[index] = updated;
     return updated;
   }
+
+  Future<void> deleteEmail(String id) async {
+    await Future.delayed(const Duration(milliseconds: 200));
+    _emails.removeWhere((e) => e.id == id);
+  }
 }

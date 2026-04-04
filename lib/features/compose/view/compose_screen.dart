@@ -1,23 +1,35 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:messenger/core/theme/app_colors.dart';
 
 import '../../../core/shared/constants/app_routes.dart';
 import '../../../core/shared/widgets/app_text_field.dart';
+import '../../inbox/domain/inbox_datasource.dart';
+import '../../inbox/provider/sent_provider.dart';
 
-class ComposeScreen extends StatefulWidget {
-  const ComposeScreen({super.key});
+class ComposeScreen extends ConsumerStatefulWidget {
+  const ComposeScreen({
+    super.key,
+    this.initialTo,
+    this.initialSubject,
+  });
+
+  final String? initialTo;
+  final String? initialSubject;
 
   @override
-  State<ComposeScreen> createState() => _ComposeScreenState();
+  ConsumerState<ComposeScreen> createState() => _ComposeScreenState();
 }
 
-class _ComposeScreenState extends State<ComposeScreen> {
+class _ComposeScreenState extends ConsumerState<ComposeScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _toController = TextEditingController();
-  final _subjectController = TextEditingController();
+  late final _toController = TextEditingController(text: widget.initialTo);
+  late final _subjectController =
+      TextEditingController(text: widget.initialSubject);
   final _bodyController = TextEditingController();
+  bool _isSending = false;
 
   @override
   void dispose() {
@@ -27,8 +39,37 @@ class _ComposeScreenState extends State<ComposeScreen> {
     super.dispose();
   }
 
-  void _send() {
+  Future<void> _send() async {
     if (!_formKey.currentState!.validate()) return;
+    setState(() => _isSending = true);
+
+    // Simulate network delay
+    await Future.delayed(const Duration(milliseconds: 700));
+
+    final email = EmailModel(
+      id: 'sent_${DateTime.now().millisecondsSinceEpoch}',
+      sender: 'Me',
+      senderEmail: 'chris@example.com',
+      subject: _subjectController.text.trim(),
+      preview: _bodyController.text.trim(),
+      body: _bodyController.text.trim(),
+      timestamp: DateTime.now(),
+      isRead: true,
+    );
+
+    ref.read(sentProvider.notifier).addEmail(email);
+
+    if (!mounted) return;
+    setState(() => _isSending = false);
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Message sent'),
+        behavior: SnackBarBehavior.floating,
+        duration: Duration(seconds: 2),
+      ),
+    );
+
     if (context.canPop()) {
       context.pop();
     } else {
@@ -47,13 +88,15 @@ class _ComposeScreenState extends State<ComposeScreen> {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.close_rounded),
-          onPressed: () {
-            if (context.canPop()) {
-              context.pop();
-            } else {
-              context.go(AppRoutes.inbox);
-            }
-          },
+          onPressed: _isSending
+              ? null
+              : () {
+                  if (context.canPop()) {
+                    context.pop();
+                  } else {
+                    context.go(AppRoutes.inbox);
+                  }
+                },
         ),
         title: Text(
           'New Message',
@@ -62,12 +105,22 @@ class _ComposeScreenState extends State<ComposeScreen> {
         actions: [
           Padding(
             padding: EdgeInsets.only(right: 12.w),
-            child: TextButton.icon(
-              onPressed: _send,
-              icon: const Icon(Icons.send_rounded, size: 18),
-              label: const Text('Send'),
-              style: TextButton.styleFrom(foregroundColor: AppColors.brandNavy),
-            ),
+            child: _isSending
+                ? const Padding(
+                    padding: EdgeInsets.all(14),
+                    child: SizedBox(
+                      width: 18,
+                      height: 18,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    ),
+                  )
+                : TextButton.icon(
+                    onPressed: _send,
+                    icon: const Icon(Icons.send_rounded, size: 18),
+                    label: const Text('Send'),
+                    style: TextButton.styleFrom(
+                        foregroundColor: AppColors.brandNavy),
+                  ),
           ),
         ],
       ),
@@ -78,7 +131,8 @@ class _ComposeScreenState extends State<ComposeScreen> {
             Container(height: 0.5, color: AppColors.borderLight),
             Expanded(
               child: SingleChildScrollView(
-                padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
+                padding:
+                    EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
                 child: Column(
                   children: [
                     AppTextField(
