@@ -13,56 +13,46 @@ class InboxScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final inboxAsync = ref.watch(inboxProvider);
-    final tt = Theme.of(context).textTheme;
 
     return Scaffold(
       backgroundColor: AppColors.scaffoldBackground,
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => context.push(AppRoutes.compose),
+        backgroundColor: AppColors.brandNavy,
+        foregroundColor: AppColors.white,
+        elevation: 2,
+        icon: const Icon(Icons.edit_outlined),
+        label: const Text('Compose'),
+      ),
       body: CustomScrollView(
         slivers: [
-          SliverAppBar(
-            floating: true,
-            backgroundColor: AppColors.scaffoldBackground,
-            surfaceTintColor: AppColors.transparent,
-            title: Text('Inbox',
-                style: tt.titleLarge
-                    ?.copyWith(fontWeight: FontWeight.w700)),
-            actions: [
-              IconButton(
-                icon: const Icon(Icons.search_rounded),
-                onPressed: () {},
-              ),
-            ],
-          ),
           inboxAsync.when(
             loading: () => const SliverFillRemaining(
               child: Center(child: CircularProgressIndicator()),
             ),
             error: (e, _) => SliverFillRemaining(
               child: Center(
-                  child: Text('Failed to load inbox\n$e',
-                      textAlign: TextAlign.center)),
+                child: Text(
+                  'Failed to load inbox\n$e',
+                  textAlign: TextAlign.center,
+                ),
+              ),
             ),
             data: (emails) => emails.isEmpty
                 ? const SliverFillRemaining(
                     child: Center(child: Text('Your inbox is empty')),
                   )
                 : SliverList(
-                    delegate: SliverChildBuilderDelegate(
-                      (context, index) {
-                        final email = emails[index];
-                        return EmailListTile(
-                          email: email,
-                          onTap: () {
-                            ref
-                                .read(inboxProvider.notifier)
-                                .markRead(email.id);
-                            context.go(AppRoutes.emailDetail,
-                                extra: email);
-                          },
-                        );
-                      },
-                      childCount: emails.length,
-                    ),
+                    delegate: SliverChildBuilderDelegate((context, index) {
+                      final email = emails[index];
+                      return EmailListTile(
+                        email: email,
+                        onTap: () {
+                          ref.read(inboxProvider.notifier).markRead(email.id);
+                          context.go(AppRoutes.emailDetail, extra: email);
+                        },
+                      );
+                    }, childCount: emails.length),
                   ),
           ),
         ],

@@ -13,21 +13,11 @@ class DraftsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final draftsAsync = ref.watch(draftsProvider);
-    final tt = Theme.of(context).textTheme;
 
     return Scaffold(
       backgroundColor: AppColors.scaffoldBackground,
       body: CustomScrollView(
         slivers: [
-          SliverAppBar(
-            floating: true,
-            backgroundColor: AppColors.scaffoldBackground,
-            surfaceTintColor: AppColors.transparent,
-            title: Text(
-              'Drafts',
-              style: tt.titleLarge?.copyWith(fontWeight: FontWeight.w700),
-            ),
-          ),
           draftsAsync.when(
             loading: () => const SliverFillRemaining(
               child: Center(child: CircularProgressIndicator()),

@@ -13,21 +13,11 @@ class SentScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final sentAsync = ref.watch(sentProvider);
-    final tt = Theme.of(context).textTheme;
 
     return Scaffold(
       backgroundColor: AppColors.scaffoldBackground,
       body: CustomScrollView(
         slivers: [
-          SliverAppBar(
-            floating: true,
-            backgroundColor: AppColors.scaffoldBackground,
-            surfaceTintColor: AppColors.transparent,
-            title: Text(
-              'Sent',
-              style: tt.titleLarge?.copyWith(fontWeight: FontWeight.w700),
-            ),
-          ),
           sentAsync.when(
             loading: () => const SliverFillRemaining(
               child: Center(child: CircularProgressIndicator()),

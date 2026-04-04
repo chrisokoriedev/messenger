@@ -18,15 +18,6 @@ class ProfileScreen extends ConsumerWidget {
       backgroundColor: AppColors.scaffoldBackground,
       body: CustomScrollView(
         slivers: [
-          SliverAppBar(
-            floating: true,
-            backgroundColor: AppColors.scaffoldBackground,
-            surfaceTintColor: AppColors.transparent,
-            title: Text(
-              'Profile',
-              style: tt.titleLarge?.copyWith(fontWeight: FontWeight.w700),
-            ),
-          ),
           SliverToBoxAdapter(
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 24.w),
