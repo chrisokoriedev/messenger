@@ -26,13 +26,10 @@ class EmailDetailScreen extends StatelessWidget {
           onPressed: () => context.pop(),
         ),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.reply_outlined),
-            onPressed: () {},
-          ),
+          IconButton(icon: const Icon(Icons.reply_outlined), onPressed: () {}),
           IconButton(
             icon: const Icon(Icons.delete_outline_rounded),
-            onPressed: () => context.pop(),
+            onPressed: () {},
           ),
         ],
       ),
@@ -79,8 +76,9 @@ class EmailDetailScreen extends StatelessWidget {
                       ),
                       Text(
                         email.senderEmail,
-                        style:
-                            tt.bodySmall?.copyWith(color: AppColors.textMuted),
+                        style: tt.bodySmall?.copyWith(
+                          color: AppColors.textMuted,
+                        ),
                       ),
                     ],
                   ),
