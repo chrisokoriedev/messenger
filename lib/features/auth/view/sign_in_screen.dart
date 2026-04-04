@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
 
-import '../../../core/shared/constants/app_routes.dart';
 import '../../../core/shared/widgets/app_button.dart';
 import '../../../core/shared/widgets/app_text_field.dart';
 import '../../../core/shared/theme/app_colors.dart';
@@ -31,16 +29,17 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
 
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
-    final success = await ref.read(signInProvider.notifier).signIn(
+    final success = await ref.read(authProvider.notifier).signIn(
           _emailController.text.trim(),
           _passwordController.text,
         );
-    if (success && mounted) context.go(AppRoutes.inbox);
+    // Router redirect guard navigates to inbox on success.
+    if (!success) return;
   }
 
   @override
   Widget build(BuildContext context) {
-    final state = ref.watch(signInProvider);
+    final state = ref.watch(authProvider);
     final tt = Theme.of(context).textTheme;
 
     return Scaffold(

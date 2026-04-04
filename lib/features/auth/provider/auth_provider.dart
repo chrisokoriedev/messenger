@@ -1,29 +1,60 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:messenger/features/auth/provider/auth_state.dart';
 
 import '../../../core/providers/main_provider.dart';
+import '../../../core/providers/shared_preferences_provider.dart';
+import '../domain/user.dart';
+import 'auth_state.dart';
 
+class AuthNotifier extends Notifier<AuthState> {
+  static const _kUserId    = 'auth_user_id';
+  static const _kUserName  = 'auth_user_name';
+  static const _kUserEmail = 'auth_user_email';
 
-class SignInNotifier extends Notifier<SignInState> {
   @override
-  SignInState build() => const SignInState();
+  AuthState build() {
+    final prefs = ref.read(sharedPreferencesProvider);
+    final id = prefs.getString(_kUserId);
+    if (id != null) {
+      return AuthState(
+        user: User(
+          id: id,
+          name: prefs.getString(_kUserName) ?? '',
+          email: prefs.getString(_kUserEmail) ?? '',
+        ),
+      );
+    }
+    return const AuthState();
+  }
 
   Future<bool> signIn(String email, String password) async {
-    state = const SignInState(isLoading: true);
+    state = const AuthState(isLoading: true);
     try {
-      await ref
+      final user = await ref
           .read(authDatasourceProvider)
           .signIn(email: email, password: password);
-      state = const SignInState();
+      final prefs = ref.read(sharedPreferencesProvider);
+      await prefs.setString(_kUserId, user.id);
+      await prefs.setString(_kUserName, user.name);
+      await prefs.setString(_kUserEmail, user.email);
+      state = AuthState(user: user);
       return true;
     } catch (e) {
-      state = SignInState(error: e.toString().replaceFirst('Exception: ', ''));
+      state = AuthState(error: e.toString().replaceFirst('Exception: ', ''));
       return false;
     }
   }
 
-  void clearError() => state = const SignInState();
+  Future<void> signOut() async {
+    final prefs = ref.read(sharedPreferencesProvider);
+    await prefs.remove(_kUserId);
+    await prefs.remove(_kUserName);
+    await prefs.remove(_kUserEmail);
+    state = const AuthState();
+  }
+
+  void clearError() => state = AuthState(user: state.user);
 }
 
-final signInProvider =
-    NotifierProvider<SignInNotifier, SignInState>(SignInNotifier.new);
+final authProvider =
+    NotifierProvider<AuthNotifier, AuthState>(AuthNotifier.new);
+

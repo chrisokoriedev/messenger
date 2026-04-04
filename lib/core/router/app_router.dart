@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 
 import '../shared/constants/app_routes.dart';
 import '../shared/theme/app_colors.dart';
+import '../../features/auth/provider/auth_provider.dart';
+import '../../features/auth/provider/auth_state.dart';
 import '../../features/auth/view/sign_in_screen.dart';
 import '../../features/inbox/view/inbox_screen.dart';
 import '../../features/inbox/view/sent_screen.dart';
@@ -18,23 +20,37 @@ import '../../core/domain/email.dart';
 // ─────────────────────────────────────────────────────────────────────────────
 
 final routerProvider = Provider<GoRouter>((ref) {
-  // TODO: watch your auth provider and uncomment the redirect guard below.
-  // final auth = ref.watch(authStateProvider);
+  final notifier = _RouterNotifier(ref);
+  ref.onDispose(notifier.dispose);
 
   return GoRouter(
     initialLocation: AppRoutes.signIn,
     debugLogDiagnostics: false,
-
-    // redirect: (context, state) {
-    //   final loggedIn = auth.isAuthenticated;
-    //   final onAuth  = state.matchedLocation == AppRoutes.signIn;
-    //   if (!loggedIn && !onAuth) return AppRoutes.signIn;
-    //   if (loggedIn  &&  onAuth) return AppRoutes.inbox;
-    //   return null;
-    // },
+    refreshListenable: notifier,
+    redirect: notifier.redirect,
     routes: _routes,
   );
 });
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Router Notifier — triggers GoRouter refresh on auth state changes
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _RouterNotifier extends ChangeNotifier {
+  _RouterNotifier(this._ref) {
+    _ref.listen<AuthState>(authProvider, (_, __) => notifyListeners());
+  }
+
+  final Ref _ref;
+
+  String? redirect(BuildContext context, GoRouterState state) {
+    final isAuth = _ref.read(authProvider).isAuthenticated;
+    final onSignIn = state.matchedLocation == AppRoutes.signIn;
+    if (!isAuth && !onSignIn) return AppRoutes.signIn;
+    if (isAuth && onSignIn) return AppRoutes.inbox;
+    return null;
+  }
+}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Routes
@@ -162,7 +178,7 @@ class _AppShell extends StatelessWidget {
     return Scaffold(
       body: navigationShell,
       floatingActionButton: FloatingActionButton(
-        onPressed: () => context.go(AppRoutes.compose),
+        onPressed: () => context.push(AppRoutes.compose),
         backgroundColor: AppColors.brandNavy,
         foregroundColor: AppColors.white,
         elevation: 2,

@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../core/shared/theme/app_colors.dart';
 import '../../auth/domain/user.dart';
+import '../../auth/provider/auth_provider.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    const user = User.mock;
+  Widget build(BuildContext context, WidgetRef ref) {
+    final user = ref.watch(authProvider).user ?? User.mock;
     final tt = Theme.of(context).textTheme;
 
     return Scaffold(
@@ -78,7 +80,7 @@ class ProfileScreen extends StatelessWidget {
                   _ProfileTile(
                     icon: Icons.logout_rounded,
                     label: 'Sign out',
-                    onTap: () {},
+                    onTap: () => ref.read(authProvider.notifier).signOut(),
                     isDestructive: true,
                   ),
                 ],

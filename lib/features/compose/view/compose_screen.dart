@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/shared/constants/app_routes.dart';
 import '../../../core/shared/theme/app_colors.dart';
 import '../../../core/shared/widgets/app_text_field.dart';
 
@@ -28,7 +29,11 @@ class _ComposeScreenState extends State<ComposeScreen> {
 
   void _send() {
     if (!_formKey.currentState!.validate()) return;
-    context.pop();
+    if (context.canPop()) {
+      context.pop();
+    } else {
+      context.go(AppRoutes.inbox);
+    }
   }
 
   @override
@@ -43,7 +48,13 @@ class _ComposeScreenState extends State<ComposeScreen> {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.close_rounded),
-          onPressed: () => context.pop(),
+          onPressed: () {
+            if (context.canPop()) {
+              context.pop();
+            } else {
+              context.go(AppRoutes.inbox);
+            }
+          },
         ),
         title: Text(
           'New Message',
