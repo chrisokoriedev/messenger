@@ -3,11 +3,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:messenger/core/theme/app_colors.dart';
+import 'package:messenger/features/compose/provider/compose_state.dart';
 
 import '../../../core/shared/constants/app_routes.dart';
-import '../../../core/shared/widgets/app_text_field.dart';
-import '../../inbox/domain/inbox_datasource.dart';
-import '../../inbox/provider/sent_provider.dart';
+import '../../../core/shared/widgets/app_divider.dart';
+import '../provider/compose_provider.dart';
+import '../widgets/subject_field.dart';
+import '../widgets/to_field.dart';
 
 class ComposeScreen extends ConsumerStatefulWidget {
   const ComposeScreen({
@@ -24,69 +26,83 @@ class ComposeScreen extends ConsumerStatefulWidget {
 }
 
 class _ComposeScreenState extends ConsumerState<ComposeScreen> {
-  final _formKey = GlobalKey<FormState>();
-  late final _toController = TextEditingController(text: widget.initialTo);
-  late final _subjectController =
-      TextEditingController(text: widget.initialSubject);
+  final _subjectController = TextEditingController();
   final _bodyController = TextEditingController();
-  bool _isSending = false;
+  final _toInputController = TextEditingController();
+  final _toFocusNode = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.initialSubject != null) {
+      _subjectController.text = widget.initialSubject!;
+    }
+    if (widget.initialTo != null && widget.initialTo!.isNotEmpty) {
+      // Defer until first frame so the provider is ready
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ref.read(composeProvider.notifier).addRecipient(widget.initialTo!);
+      });
+    }
+  }
 
   @override
   void dispose() {
-    _toController.dispose();
     _subjectController.dispose();
     _bodyController.dispose();
+    _toInputController.dispose();
+    _toFocusNode.dispose();
     super.dispose();
   }
 
-  Future<void> _send() async {
-    if (!_formKey.currentState!.validate()) return;
-    setState(() => _isSending = true);
-
-    // Simulate network delay
-    await Future.delayed(const Duration(milliseconds: 700));
-
-    final email = EmailModel(
-      id: 'sent_${DateTime.now().millisecondsSinceEpoch}',
-      sender: 'Me',
-      senderEmail: 'chris@example.com',
-      subject: _subjectController.text.trim(),
-      preview: _bodyController.text.trim(),
-      body: _bodyController.text.trim(),
-      timestamp: DateTime.now(),
-      isRead: true,
-    );
-
-    ref.read(sentProvider.notifier).addEmail(email);
-
-    if (!mounted) return;
-    setState(() => _isSending = false);
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Message sent'),
-        behavior: SnackBarBehavior.floating,
-        duration: Duration(seconds: 2),
-      ),
-    );
-
-    if (context.canPop()) {
-      context.pop();
-    } else {
-      context.go(AppRoutes.inbox);
-    }
+  void _commitToInput() {
+    final raw = _toInputController.text;
+    if (raw.trim().isEmpty) return;
+    ref.read(composeProvider.notifier).addRecipient(raw);
+    _toInputController.clear();
   }
 
   @override
   Widget build(BuildContext context) {
     final tt = Theme.of(context).textTheme;
+    final state = ref.watch(composeProvider);
+
+    ref.listen<ComposeState>(composeProvider, (_, next) {
+      if (next.sent) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Message sent'),
+            behavior: SnackBarBehavior.floating,
+            duration: Duration(seconds: 2),
+          ),
+        );
+        if (context.canPop()) {
+          context.pop();
+        } else {
+          context.go(AppRoutes.inbox);
+        }
+      }
+      if (next.error != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(next.error!),
+            behavior: SnackBarBehavior.floating,
+            backgroundColor: Colors.red.shade600,
+          ),
+        );
+        ref.read(composeProvider.notifier).clearError();
+      }
+    });
 
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
+        backgroundColor: Colors.white,
         elevation: 0,
+        surfaceTintColor: Colors.transparent,
         leading: IconButton(
-          icon: const Icon(Icons.close_rounded),
-          onPressed: _isSending
+          icon: const Icon(Icons.close_rounded, size: 22),
+          color: AppColors.textSecondary,
+          onPressed: state.isSending
               ? null
               : () {
                   if (context.canPop()) {
@@ -98,85 +114,102 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen> {
         ),
         title: Text(
           'New Message',
-          style: tt.titleMedium?.copyWith(fontWeight: FontWeight.w600),
+          style: tt.titleMedium?.copyWith(
+            fontWeight: FontWeight.w600,
+            color: AppColors.textPrimary,
+          ),
         ),
         actions: [
-          Padding(
-            padding: EdgeInsets.only(right: 12.w),
-            child: _isSending
-                ? const Padding(
-                    padding: EdgeInsets.all(14),
-                    child: SizedBox(
-                      width: 18,
-                      height: 18,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    ),
-                  )
-                : TextButton.icon(
-                    onPressed: _send,
-                    icon: const Icon(Icons.send_rounded, size: 18),
-                    label: const Text('Send'),
-                    style: TextButton.styleFrom(
-                        foregroundColor: AppColors.brandNavy),
-                  ),
-          ),
+          if (state.isSending)
+            const Padding(
+              padding: EdgeInsets.all(16),
+              child: SizedBox(
+                width: 18,
+                height: 18,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              ),
+            )
+          else
+            Padding(
+              padding: EdgeInsets.only(right: 8.w),
+              child: IconButton(
+                onPressed: () {
+                  _commitToInput();
+                  ref.read(composeProvider.notifier).send(
+                        subject: _subjectController.text,
+                        body: _bodyController.text,
+                      );
+                },
+                icon: const Icon(Icons.send_rounded, size: 20),
+                color: AppColors.brandNavy,
+                tooltip: 'Send',
+              ),
+            ),
         ],
       ),
-      body: Form(
-        key: _formKey,
-        child: Column(
-          children: [
-            Container(height: 0.5, color: AppColors.borderLight),
-            Expanded(
-              child: SingleChildScrollView(
-                padding:
-                    EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
-                child: Column(
-                  children: [
-                    AppTextField(
-                      label: 'To',
-                      controller: _toController,
-                      keyboardType: TextInputType.emailAddress,
-                      textInputAction: TextInputAction.next,
-                      prefixIcon: Icons.person_outline_rounded,
-                      validator: (v) {
-                        if (v == null || v.trim().isEmpty) {
-                          return 'Enter a recipient';
-                        }
-                        if (!v.contains('@')) return 'Enter a valid email';
-                        return null;
-                      },
-                    ),
-                    16.verticalSpace,
-                    AppTextField(
-                      label: 'Subject',
-                      controller: _subjectController,
-                      textInputAction: TextInputAction.next,
-                      prefixIcon: Icons.subject_rounded,
-                      validator: (v) => (v == null || v.trim().isEmpty)
-                          ? 'Enter a subject'
-                          : null,
-                    ),
-                    16.verticalSpace,
-                    AppTextField(
-                      label: 'Message',
-                      controller: _bodyController,
-                      textInputAction: TextInputAction.newline,
-                      keyboardType: TextInputType.multiline,
-                      maxLines: 14,
-                      minLines: 8,
-                      validator: (v) => (v == null || v.trim().isEmpty)
-                          ? 'Write your message'
-                          : null,
-                    ),
-                    40.verticalSpace,
-                  ],
+      body: Column(
+        children: [
+          const AppDivider(),
+          ToField(
+            recipients: state.recipients,
+            controller: _toInputController,
+            focusNode: _toFocusNode,
+            hasError: state.toError,
+            onTyping: (v) {
+              ref.read(composeProvider.notifier).clearToError();
+              if (v.endsWith(',') || v.endsWith(' ')) _commitToInput();
+            },
+            onSubmit: _commitToInput,
+            onRemove: ref.read(composeProvider.notifier).removeRecipient,
+          ),
+          const AppDivider(),
+          SubjectField(
+            controller: _subjectController,
+            hasError: state.subjectError,
+            onChanged: (_) {
+              if (state.subjectError) {
+                ref.read(composeProvider.notifier).send(
+                      subject: _subjectController.text,
+                      body: _bodyController.text,
+                    );
+              }
+            },
+          ),
+          const AppDivider(),
+          Expanded(
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.w),
+              child: TextField(
+                controller: _bodyController,
+                maxLines: null,
+                expands: true,
+                textAlignVertical: TextAlignVertical.top,
+                style: tt.bodyMedium?.copyWith(
+                  color: AppColors.textPrimary,
+                  height: 1.65,
+                  fontSize: 15,
+                ),
+                decoration: InputDecoration(
+                  contentPadding: EdgeInsets.only(top: 14.h, bottom: 16.h),
+                  hintText: state.bodyError
+                      ? 'Please write a message'
+                      : 'Compose email',
+                  hintStyle: tt.bodyMedium?.copyWith(
+                    color: state.bodyError
+                        ? Colors.red.shade400
+                        : AppColors.textMuted,
+                    fontSize: 15,
+                  ),
+                  border: InputBorder.none,
+                  enabledBorder: InputBorder.none,
+                  focusedBorder: InputBorder.none,
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 }
+
