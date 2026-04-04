@@ -12,7 +12,6 @@ import '../../features/inbox/view/sent_screen.dart';
 import '../../features/inbox/view/drafts_screen.dart';
 import '../../features/inbox/view/email_detail_screen.dart';
 import '../../features/compose/view/compose_screen.dart';
-import '../../features/profile/view/profile_screen.dart';
 import '../../core/domain/email.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
@@ -90,15 +89,7 @@ final List<RouteBase> _routes = [
         ],
       ),
 
-      StatefulShellBranch(
-        routes: [
-          GoRoute(
-            path: AppRoutes.profile,
-            name: AppRouteNames.profile,
-            builder: (context, state) => const ProfileScreen(),
-          ),
-        ],
-      ),
+      
     ],
   ),
   GoRoute(

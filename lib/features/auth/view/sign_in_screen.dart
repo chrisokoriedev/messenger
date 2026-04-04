@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:messenger/core/theme/app_colors.dart';
 
 import '../../../core/shared/widgets/app_button.dart';
 import '../../../core/shared/widgets/app_text_field.dart';
-import '../../../core/shared/theme/app_colors.dart';
 import '../provider/auth_provider.dart';
 
 class SignInScreen extends ConsumerStatefulWidget {

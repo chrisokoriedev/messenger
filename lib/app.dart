@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'core/router/app_router.dart';
-import 'core/shared/theme/app_theme.dart';
+import 'core/theme/app_theme.dart';
 
 class MessengerApp extends ConsumerWidget {
   const MessengerApp({super.key});

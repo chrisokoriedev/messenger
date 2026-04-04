@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/shared/constants/app_routes.dart';
-import '../../../core/shared/theme/app_colors.dart';
 import '../provider/sent_provider.dart';
 import 'email_list_tile.dart';
 
@@ -15,7 +14,6 @@ class SentScreen extends ConsumerWidget {
     final sentAsync = ref.watch(sentProvider);
 
     return Scaffold(
-      backgroundColor: AppColors.scaffoldBackground,
       body: CustomScrollView(
         slivers: [
           sentAsync.when(

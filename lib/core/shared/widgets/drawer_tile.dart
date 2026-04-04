@@ -4,7 +4,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 import 'package:flutter/material.dart';
-import 'package:messenger/core/shared/theme/app_colors.dart';
+import 'package:messenger/core/theme/app_colors.dart';
 
 class DrawerTile extends StatelessWidget {
   const DrawerTile({

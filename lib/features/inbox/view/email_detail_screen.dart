@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:messenger/core/theme/app_colors.dart';
 
 import '../../../core/domain/email.dart';
 import '../../../core/shared/app_extension.dart';
-import '../../../core/shared/theme/app_colors.dart';
 
 class EmailDetailScreen extends StatelessWidget {
   const EmailDetailScreen({super.key, required this.email});

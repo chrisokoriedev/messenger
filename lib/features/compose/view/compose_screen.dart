@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:messenger/core/theme/app_colors.dart';
 
 import '../../../core/shared/constants/app_routes.dart';
-import '../../../core/shared/theme/app_colors.dart';
 import '../../../core/shared/widgets/app_text_field.dart';
 
 class ComposeScreen extends StatefulWidget {
@@ -41,7 +41,6 @@ class _ComposeScreenState extends State<ComposeScreen> {
     final tt = Theme.of(context).textTheme;
 
     return Scaffold(
-      backgroundColor: AppColors.white,
       appBar: AppBar(
         backgroundColor: AppColors.white,
         surfaceTintColor: AppColors.transparent,
@@ -67,9 +66,7 @@ class _ComposeScreenState extends State<ComposeScreen> {
               onPressed: _send,
               icon: const Icon(Icons.send_rounded, size: 18),
               label: const Text('Send'),
-              style: TextButton.styleFrom(
-                foregroundColor: AppColors.brandNavy,
-              ),
+              style: TextButton.styleFrom(foregroundColor: AppColors.brandNavy),
             ),
           ),
         ],
@@ -81,8 +78,7 @@ class _ComposeScreenState extends State<ComposeScreen> {
             Container(height: 0.5, color: AppColors.borderLight),
             Expanded(
               child: SingleChildScrollView(
-                padding:
-                    EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
+                padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
                 child: Column(
                   children: [
                     AppTextField(

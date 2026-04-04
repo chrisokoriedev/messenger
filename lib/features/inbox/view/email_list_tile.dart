@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:messenger/core/domain/email.dart';
+import 'package:messenger/core/theme/app_colors.dart';
 
 import '../../../core/shared/app_extension.dart';
-import '../../../core/shared/theme/app_colors.dart';
 
 class EmailListTile extends StatelessWidget {
   const EmailListTile({super.key, required this.email, required this.onTap});

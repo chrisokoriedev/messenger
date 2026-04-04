@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:messenger/core/theme/app_colors.dart';
 
 import '../../../core/shared/constants/app_routes.dart';
-import '../../../core/shared/theme/app_colors.dart';
 import '../provider/inbox_provider.dart';
 import 'email_list_tile.dart';
 
@@ -15,7 +15,6 @@ class InboxScreen extends ConsumerWidget {
     final inboxAsync = ref.watch(inboxProvider);
 
     return Scaffold(
-      backgroundColor: AppColors.scaffoldBackground,
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => context.push(AppRoutes.compose),
         backgroundColor: AppColors.brandNavy,
