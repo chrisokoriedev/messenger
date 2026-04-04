@@ -200,6 +200,7 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen> {
                         : AppColors.textMuted,
                     fontSize: 15,
                   ),
+                  filled: false,
                   border: InputBorder.none,
                   enabledBorder: InputBorder.none,
                   focusedBorder: InputBorder.none,

@@ -76,7 +76,10 @@ class ToField extends StatelessWidget {
                             fontSize: 15,
                           ),
                           isDense: true,
+                          filled: false,
                           border: InputBorder.none,
+                          enabledBorder: InputBorder.none,
+                          focusedBorder: InputBorder.none,
                           contentPadding:
                               const EdgeInsets.symmetric(vertical: 8),
                         ),

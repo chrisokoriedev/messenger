@@ -45,13 +45,15 @@ class SubjectField extends StatelessWidget {
                 decoration: InputDecoration(
                   hintText: hasError ? 'Required' : 'Add a subject',
                   hintStyle: TextStyle(
-                    color:
-                        hasError ? Colors.red.shade400 : AppColors.textMuted,
+                    color: hasError ? Colors.red.shade400 : AppColors.textMuted,
                     fontSize: 15,
                     fontWeight: FontWeight.w400,
                   ),
                   isDense: true,
+                  filled: false,
                   border: InputBorder.none,
+                  enabledBorder: InputBorder.none,
+                  focusedBorder: InputBorder.none,
                   contentPadding: EdgeInsets.zero,
                 ),
                 onChanged: onChanged,
