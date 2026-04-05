@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/providers/main_provider.dart';
+import '../../auth/provider/auth_provider.dart';
 import '../../inbox/provider/drafts_provider.dart';
 import '../../inbox/provider/sent_provider.dart';
 import 'compose_state.dart';
@@ -29,11 +30,14 @@ class ComposeNotifier extends AutoDisposeNotifier<ComposeState> {
     required String subject,
     required String body,
   }) {
+    final userEmail =
+        ref.read(authProvider).user?.email ?? 'me@example.com';
     ref.read(draftsProvider.notifier).saveDraft(
           id: draftId,
           recipients: state.recipients,
           subject: subject,
           body: body,
+          senderEmail: userEmail,
         );
     state = state.copyWith(draftSaved: true);
   }
@@ -58,10 +62,13 @@ class ComposeNotifier extends AutoDisposeNotifier<ComposeState> {
 
     state = state.copyWith(isSending: true);
     try {
+      final userEmail =
+          ref.read(authProvider).user?.email ?? 'me@example.com';
       final email = await ref.read(composeDatasourceProvider).send(
             recipients: state.recipients,
             subject: subject.trim(),
             body: body.trim(),
+            senderEmail: userEmail,
           );
       ref.read(sentProvider.notifier).addEmail(email);
       if (draftId != null) {

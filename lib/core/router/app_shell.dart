@@ -141,6 +141,19 @@ class AppShell extends ConsumerWidget {
                 selected: currentIndex == 2,
                 onTap: () => switchTo(2),
               ),
+              const Spacer(),
+              const Divider(height: 1, color: AppColors.borderLight),
+              DrawerTile(
+                icon: Icons.logout_rounded,
+                activeIcon: Icons.logout_rounded,
+                label: 'Sign out',
+                selected: false,
+                onTap: () {
+                  Navigator.of(context).pop();
+                  ref.read(authProvider.notifier).signOut();
+                },
+              ),
+              const SizedBox(height: 8),
             ],
           ),
         ),

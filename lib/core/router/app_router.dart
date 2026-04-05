@@ -111,10 +111,8 @@ final List<RouteBase> _routes = [
       String? draftId;
 
       if (extra is Email) {
-        // Opened from Drafts: pre-fill all fields
-        initialTo = extra.senderEmail == 'chris@example.com'
-            ? null
-            : extra.senderEmail;
+        // Opened from Drafts: pre-fill fields (sender == 'Me' means it's ours)
+        initialTo = extra.sender == 'Me' ? null : extra.senderEmail;
         initialSubject = extra.subject;
         initialBody = extra.body;
         draftId = extra.id;

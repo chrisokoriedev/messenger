@@ -25,6 +25,7 @@ class DraftsNotifier extends AsyncNotifier<List<Email>> {
     required List<String> recipients,
     required String subject,
     required String body,
+    required String senderEmail,
   }) {
     final current = state.valueOrNull ?? [];
     final now = DateTime.now();
@@ -32,7 +33,7 @@ class DraftsNotifier extends AsyncNotifier<List<Email>> {
     final updated = EmailModel(
       id: id,
       sender: 'Me',
-      senderEmail: 'chris@example.com',
+      senderEmail: senderEmail,
       subject: subject.trim().isEmpty ? '(No subject)' : subject.trim(),
       preview: body.trim().length > 80
           ? '${body.trim().substring(0, 80)}…'
