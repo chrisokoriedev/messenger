@@ -103,18 +103,43 @@ final List<RouteBase> _routes = [
   GoRoute(
     path: AppRoutes.compose,
     name: AppRouteNames.compose,
-    pageBuilder: (context, state) => CustomTransitionPage(
-      key: state.pageKey,
-    child: ComposeScreen(
-          initialTo: (state.extra as Map?)?['to'] as String?,
-          initialSubject: (state.extra as Map?)?['subject'] as String?,
+    pageBuilder: (context, state) {
+      final extra = state.extra;
+      String? initialTo;
+      String? initialSubject;
+      String? initialBody;
+      String? draftId;
+
+      if (extra is Email) {
+        // Opened from Drafts: pre-fill all fields
+        initialTo = extra.senderEmail == 'chris@example.com'
+            ? null
+            : extra.senderEmail;
+        initialSubject = extra.subject;
+        initialBody = extra.body;
+        draftId = extra.id;
+      } else if (extra is Map) {
+        // Opened from Reply
+        initialTo = extra['to'] as String?;
+        initialSubject = extra['subject'] as String?;
+        initialBody = extra['body'] as String?;
+      }
+
+      return CustomTransitionPage(
+        key: state.pageKey,
+        child: ComposeScreen(
+          initialTo: initialTo,
+          initialSubject: initialSubject,
+          initialBody: initialBody,
+          draftId: draftId,
         ),
-      transitionsBuilder: (context, animation, _, child) => SlideTransition(
-        position: Tween(begin: const Offset(0, 1), end: Offset.zero).animate(
-          CurvedAnimation(parent: animation, curve: Curves.easeOutCubic),
+        transitionsBuilder: (context, animation, _, child) => SlideTransition(
+          position: Tween(begin: const Offset(0, 1), end: Offset.zero).animate(
+            CurvedAnimation(parent: animation, curve: Curves.easeOutCubic),
+          ),
+          child: child,
         ),
-        child: child,
-      ),
-    ),
+      );
+    },
   ),
 ];

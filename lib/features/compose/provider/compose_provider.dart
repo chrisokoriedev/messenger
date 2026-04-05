@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/providers/main_provider.dart';
+import '../../inbox/provider/drafts_provider.dart';
 import '../../inbox/provider/sent_provider.dart';
 import 'compose_state.dart';
 
@@ -30,7 +31,25 @@ class ComposeNotifier extends AutoDisposeNotifier<ComposeState> {
     if (state.toError) state = state.copyWith(toError: false);
   }
 
-  Future<void> send({required String subject, required String body}) async {
+  void saveDraft({
+    required String draftId,
+    required String subject,
+    required String body,
+  }) {
+    ref.read(draftsProvider.notifier).saveDraft(
+          id: draftId,
+          recipients: state.recipients,
+          subject: subject,
+          body: body,
+        );
+    state = state.copyWith(draftSaved: true);
+  }
+
+  Future<void> send({
+    required String subject,
+    required String body,
+    String? draftId,
+  }) async {
     state = state.copyWith(
       toError: state.recipients.isEmpty,
       subjectError: subject.trim().isEmpty,
@@ -46,6 +65,10 @@ class ComposeNotifier extends AutoDisposeNotifier<ComposeState> {
             body: body.trim(),
           );
       ref.read(sentProvider.notifier).addEmail(email);
+      // Remove draft if this was a draft being sent
+      if (draftId != null) {
+        ref.read(draftsProvider.notifier).removeDraft(draftId);
+      }
       state = state.copyWith(isSending: false, sent: true);
     } catch (e) {
       state = state.copyWith(

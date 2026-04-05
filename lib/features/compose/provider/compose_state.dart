@@ -5,6 +5,7 @@ class ComposeState {
   final List<String> recipients;
   final bool isSending;
   final bool sent;
+  final bool draftSaved;
   final String? error;
   final bool toError;
   final bool subjectError;
@@ -14,6 +15,7 @@ class ComposeState {
     this.recipients = const [],
     this.isSending = false,
     this.sent = false,
+    this.draftSaved = false,
     this.error,
     this.toError = false,
     this.subjectError = false,
@@ -24,6 +26,7 @@ class ComposeState {
     List<String>? recipients,
     bool? isSending,
     bool? sent,
+    bool? draftSaved,
     String? error,
     bool clearError = false,
     bool? toError,
@@ -34,6 +37,7 @@ class ComposeState {
       recipients: recipients ?? this.recipients,
       isSending: isSending ?? this.isSending,
       sent: sent ?? this.sent,
+      draftSaved: draftSaved ?? this.draftSaved,
       error: clearError ? null : error ?? this.error,
       toError: toError ?? this.toError,
       subjectError: subjectError ?? this.subjectError,

@@ -16,10 +16,14 @@ class ComposeScreen extends ConsumerStatefulWidget {
     super.key,
     this.initialTo,
     this.initialSubject,
+    this.initialBody,
+    this.draftId,
   });
 
   final String? initialTo;
   final String? initialSubject;
+  final String? initialBody;
+  final String? draftId;
 
   @override
   ConsumerState<ComposeScreen> createState() => _ComposeScreenState();
@@ -37,8 +41,10 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen> {
     if (widget.initialSubject != null) {
       _subjectController.text = widget.initialSubject!;
     }
+    if (widget.initialBody != null) {
+      _bodyController.text = widget.initialBody!;
+    }
     if (widget.initialTo != null && widget.initialTo!.isNotEmpty) {
-      // Defer until first frame so the provider is ready
       WidgetsBinding.instance.addPostFrameCallback((_) {
         ref.read(composeProvider.notifier).addRecipient(widget.initialTo!);
       });
@@ -81,6 +87,20 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen> {
           context.go(AppRoutes.inbox);
         }
       }
+      if (next.draftSaved) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Draft saved'),
+            behavior: SnackBarBehavior.floating,
+            duration: Duration(seconds: 2),
+          ),
+        );
+        if (context.canPop()) {
+          context.pop();
+        } else {
+          context.go(AppRoutes.inbox);
+        }
+      }
       if (next.error != null) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -105,10 +125,24 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen> {
           onPressed: state.isSending
               ? null
               : () {
-                  if (context.canPop()) {
-                    context.pop();
+                  final hasContent = _subjectController.text.trim().isNotEmpty ||
+                      _bodyController.text.trim().isNotEmpty ||
+                      state.recipients.isNotEmpty;
+
+                  if (hasContent) {
+                    final id = widget.draftId ??
+                        'draft_${DateTime.now().millisecondsSinceEpoch}';
+                    ref.read(composeProvider.notifier).saveDraft(
+                          draftId: id,
+                          subject: _subjectController.text,
+                          body: _bodyController.text,
+                        );
                   } else {
-                    context.go(AppRoutes.inbox);
+                    if (context.canPop()) {
+                      context.pop();
+                    } else {
+                      context.go(AppRoutes.inbox);
+                    }
                   }
                 },
         ),
@@ -138,6 +172,7 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen> {
                   ref.read(composeProvider.notifier).send(
                         subject: _subjectController.text,
                         body: _bodyController.text,
+                        draftId: widget.draftId,
                       );
                 },
                 icon: const Icon(Icons.send_rounded, size: 20),

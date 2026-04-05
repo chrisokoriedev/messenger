@@ -38,7 +38,7 @@ class DraftsScreen extends ConsumerWidget {
                         final email = emails[index];
                         return EmailListTile(
                           email: email,
-                          onTap: () => context.go(
+                          onTap: () => context.push(
                             AppRoutes.compose,
                             extra: email,
                           ),
