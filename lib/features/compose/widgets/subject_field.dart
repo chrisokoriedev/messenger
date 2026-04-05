@@ -6,12 +6,10 @@ class SubjectField extends StatelessWidget {
   const SubjectField({
     super.key,
     required this.controller,
-    required this.hasError,
     required this.onChanged,
   });
 
   final TextEditingController controller;
-  final bool hasError;
   final void Function(String) onChanged;
 
   @override
@@ -27,7 +25,7 @@ class SubjectField extends StatelessWidget {
             Text(
               'Subject',
               style: tt.bodySmall?.copyWith(
-                color: hasError ? Colors.red.shade600 : AppColors.textMuted,
+                color: AppColors.textMuted,
                 fontWeight: FontWeight.w500,
                 fontSize: 13,
               ),
@@ -43,9 +41,9 @@ class SubjectField extends StatelessWidget {
                   fontSize: 15,
                 ),
                 decoration: InputDecoration(
-                  hintText: hasError ? 'Required' : 'Add a subject',
+                  hintText: 'Add a subject',
                   hintStyle: TextStyle(
-                    color: hasError ? Colors.red.shade400 : AppColors.textMuted,
+                    color: AppColors.textMuted,
                     fontSize: 15,
                     fontWeight: FontWeight.w400,
                   ),

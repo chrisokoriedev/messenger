@@ -10,7 +10,6 @@ class ToField extends StatelessWidget {
     required this.recipients,
     required this.controller,
     required this.focusNode,
-    required this.hasError,
     required this.onTyping,
     required this.onSubmit,
     required this.onRemove,
@@ -19,7 +18,6 @@ class ToField extends StatelessWidget {
   final List<String> recipients;
   final TextEditingController controller;
   final FocusNode focusNode;
-  final bool hasError;
   final void Function(String) onTyping;
   final VoidCallback onSubmit;
   final void Function(String) onRemove;
@@ -40,7 +38,7 @@ class ToField extends StatelessWidget {
               child: Text(
                 'To',
                 style: tt.bodySmall?.copyWith(
-                  color: hasError ? Colors.red.shade600 : AppColors.textMuted,
+                  color: AppColors.textMuted,
                   fontWeight: FontWeight.w500,
                   fontSize: 13,
                 ),
@@ -70,9 +68,7 @@ class ToField extends StatelessWidget {
                         decoration: InputDecoration(
                           hintText: recipients.isEmpty ? 'Add recipients' : '',
                           hintStyle: TextStyle(
-                            color: hasError
-                                ? Colors.red.shade400
-                                : AppColors.textMuted,
+                            color: AppColors.textMuted,
                             fontSize: 15,
                           ),
                           isDense: true,

@@ -2,16 +2,22 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/domain/email.dart';
 import '../../../core/providers/main_provider.dart';
+import '../domain/email_storage_service.dart';
 import '../domain/inbox_datasource.dart';
 
 class DraftsNotifier extends AsyncNotifier<List<Email>> {
   @override
-  Future<List<Email>> build() =>
-      ref.read(inboxDatasourceProvider).getDrafts();
+  Future<List<Email>> build() async {
+    final stored = ref.read(emailStorageServiceProvider).loadDrafts();
+    if (stored.isNotEmpty) return stored;
+    return ref.read(inboxDatasourceProvider).getDrafts();
+  }
 
   void removeDraft(String id) {
     final current = state.valueOrNull ?? [];
-    state = AsyncData(current.where((e) => e.id != id).toList());
+    final next = current.where((e) => e.id != id).toList();
+    state = AsyncData(next);
+    ref.read(emailStorageServiceProvider).saveDrafts(next);
   }
 
   void saveDraft({
@@ -44,6 +50,7 @@ class DraftsNotifier extends AsyncNotifier<List<Email>> {
       next.insert(0, updated);
     }
     state = AsyncData(next);
+    ref.read(emailStorageServiceProvider).saveDrafts(next);
   }
 }
 

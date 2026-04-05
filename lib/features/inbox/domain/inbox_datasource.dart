@@ -24,6 +24,28 @@ class EmailModel extends Email {
         timestamp: timestamp,
         isRead: isRead,
       );
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'sender': sender,
+        'senderEmail': senderEmail,
+        'subject': subject,
+        'preview': preview,
+        'body': body,
+        'timestamp': timestamp.millisecondsSinceEpoch,
+        'isRead': isRead,
+      };
+
+  factory EmailModel.fromJson(Map<String, dynamic> json) => EmailModel(
+        id: json['id'] as String,
+        sender: json['sender'] as String,
+        senderEmail: json['senderEmail'] as String,
+        subject: json['subject'] as String,
+        preview: json['preview'] as String,
+        body: json['body'] as String,
+        timestamp: DateTime.fromMillisecondsSinceEpoch(json['timestamp'] as int),
+        isRead: json['isRead'] as bool? ?? false,
+      );
 }
 
 // ── Mock data ─────────────────────────────────────────────────────────────────

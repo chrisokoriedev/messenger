@@ -15,20 +15,13 @@ class ComposeNotifier extends AutoDisposeNotifier<ComposeState> {
     final email = raw.trim().replaceAll(',', '').replaceAll(' ', '');
     if (email.isEmpty || !_emailRegex.hasMatch(email)) return;
     if (state.recipients.contains(email)) return;
-    state = state.copyWith(
-      recipients: [...state.recipients, email],
-      toError: false,
-    );
+    state = state.copyWith(recipients: [...state.recipients, email]);
   }
 
   void removeRecipient(String email) {
     state = state.copyWith(
       recipients: state.recipients.where((r) => r != email).toList(),
     );
-  }
-
-  void clearToError() {
-    if (state.toError) state = state.copyWith(toError: false);
   }
 
   void saveDraft({
@@ -50,12 +43,18 @@ class ComposeNotifier extends AutoDisposeNotifier<ComposeState> {
     required String body,
     String? draftId,
   }) async {
-    state = state.copyWith(
-      toError: state.recipients.isEmpty,
-      subjectError: subject.trim().isEmpty,
-      bodyError: body.trim().isEmpty,
-    );
-    if (state.toError || state.subjectError || state.bodyError) return;
+    if (state.recipients.isEmpty) {
+      state = state.copyWith(error: 'Add at least one recipient');
+      return;
+    }
+    if (subject.trim().isEmpty) {
+      state = state.copyWith(error: 'Add a subject line');
+      return;
+    }
+    if (body.trim().isEmpty) {
+      state = state.copyWith(error: 'Write a message before sending');
+      return;
+    }
 
     state = state.copyWith(isSending: true);
     try {
@@ -65,7 +64,6 @@ class ComposeNotifier extends AutoDisposeNotifier<ComposeState> {
             body: body.trim(),
           );
       ref.read(sentProvider.notifier).addEmail(email);
-      // Remove draft if this was a draft being sent
       if (draftId != null) {
         ref.read(draftsProvider.notifier).removeDraft(draftId);
       }

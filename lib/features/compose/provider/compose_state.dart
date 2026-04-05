@@ -7,9 +7,6 @@ class ComposeState {
   final bool sent;
   final bool draftSaved;
   final String? error;
-  final bool toError;
-  final bool subjectError;
-  final bool bodyError;
 
   const ComposeState({
     this.recipients = const [],
@@ -17,9 +14,6 @@ class ComposeState {
     this.sent = false,
     this.draftSaved = false,
     this.error,
-    this.toError = false,
-    this.subjectError = false,
-    this.bodyError = false,
   });
 
   ComposeState copyWith({
@@ -29,9 +23,6 @@ class ComposeState {
     bool? draftSaved,
     String? error,
     bool clearError = false,
-    bool? toError,
-    bool? subjectError,
-    bool? bodyError,
   }) {
     return ComposeState(
       recipients: recipients ?? this.recipients,
@@ -39,9 +30,6 @@ class ComposeState {
       sent: sent ?? this.sent,
       draftSaved: draftSaved ?? this.draftSaved,
       error: clearError ? null : error ?? this.error,
-      toError: toError ?? this.toError,
-      subjectError: subjectError ?? this.subjectError,
-      bodyError: bodyError ?? this.bodyError,
     );
   }
 }

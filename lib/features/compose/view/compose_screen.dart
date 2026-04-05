@@ -189,9 +189,7 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen> {
             recipients: state.recipients,
             controller: _toInputController,
             focusNode: _toFocusNode,
-            hasError: state.toError,
             onTyping: (v) {
-              ref.read(composeProvider.notifier).clearToError();
               if (v.endsWith(',') || v.endsWith(' ')) _commitToInput();
             },
             onSubmit: _commitToInput,
@@ -200,15 +198,7 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen> {
           const AppDivider(),
           SubjectField(
             controller: _subjectController,
-            hasError: state.subjectError,
-            onChanged: (_) {
-              if (state.subjectError) {
-                ref.read(composeProvider.notifier).send(
-                      subject: _subjectController.text,
-                      body: _bodyController.text,
-                    );
-              }
-            },
+            onChanged: (_) {},
           ),
           const AppDivider(),
           Expanded(
@@ -226,13 +216,9 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen> {
                 ),
                 decoration: InputDecoration(
                   contentPadding: EdgeInsets.only(top: 14.h, bottom: 16.h),
-                  hintText: state.bodyError
-                      ? 'Please write a message'
-                      : 'Compose email',
+                  hintText: 'Compose email',
                   hintStyle: tt.bodyMedium?.copyWith(
-                    color: state.bodyError
-                        ? Colors.red.shade400
-                        : AppColors.textMuted,
+                    color: AppColors.textMuted,
                     fontSize: 15,
                   ),
                   filled: false,

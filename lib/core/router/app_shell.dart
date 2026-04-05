@@ -6,6 +6,8 @@ import 'package:messenger/core/theme/app_colors.dart';
 
 import '../../features/auth/provider/auth_provider.dart';
 import '../../features/auth/domain/user.dart';
+import '../../features/inbox/provider/inbox_provider.dart';
+import '../../features/inbox/view/inbox_search_delegate.dart';
 
 class AppShell extends ConsumerWidget {
   const AppShell({super.key, required this.navigationShell});
@@ -39,7 +41,14 @@ class AppShell extends ConsumerWidget {
           if (currentIndex == 0)
             IconButton(
               icon: const Icon(Icons.search_rounded),
-              onPressed: () {},
+              onPressed: () {
+                final emails =
+                    ref.read(inboxProvider).valueOrNull ?? [];
+                showSearch(
+                  context: context,
+                  delegate: InboxSearchDelegate(emails),
+                );
+              },
             ),
         ],
       ),
@@ -131,21 +140,6 @@ class AppShell extends ConsumerWidget {
                 label: 'Drafts',
                 selected: currentIndex == 2,
                 onTap: () => switchTo(2),
-              ),
-              const SizedBox(height: 8),
-              const Divider(
-                height: 1,
-                indent: 16,
-                endIndent: 16,
-                color: AppColors.borderLight,
-              ),
-              const SizedBox(height: 8),
-              DrawerTile(
-                icon: Icons.person_outline_rounded,
-                activeIcon: Icons.person_rounded,
-                label: 'Profile',
-                selected: currentIndex == 3,
-                onTap: () => switchTo(3),
               ),
             ],
           ),
