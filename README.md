@@ -15,6 +15,13 @@ A Flutter email client app built as part of a mobile developer assessment.
 
 ---
 
+## Demo & Download
+
+- **Screen Recording** — [Watch demo on Google Drive](https://drive.google.com/file/d/1YZYJW7nLXhff_SwexFrwfzeudDmwQUdt/view?usp=sharing)
+- **APK Download** — [Download APK from Google Drive](https://drive.google.com/file/d/1_WWN88yXOifhQC29lW9DQsarj7XRFzI5/view?usp=sharing)
+
+---
+
 ## How to Run
 
 ### Prerequisites
