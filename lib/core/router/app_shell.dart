@@ -14,7 +14,7 @@ class AppShell extends ConsumerWidget {
 
   final StatefulNavigationShell navigationShell;
 
-  static const _titles = ['Inbox', 'Sent', 'Drafts', 'Profile'];
+  static const _titles = ['Inbox', 'Sent', 'Drafts', 'Trash', 'Profile'];
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -140,6 +140,13 @@ class AppShell extends ConsumerWidget {
                 label: 'Drafts',
                 selected: currentIndex == 2,
                 onTap: () => switchTo(2),
+              ),
+              DrawerTile(
+                icon: Icons.delete_outline_rounded,
+                activeIcon: Icons.delete_rounded,
+                label: 'Trash',
+                selected: currentIndex == 3,
+                onTap: () => switchTo(3),
               ),
               const Spacer(),
               const Divider(height: 1, color: AppColors.borderLight),

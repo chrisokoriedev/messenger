@@ -2,6 +2,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/domain/email.dart';
 import '../../../core/providers/main_provider.dart';
+import '../../trash/provider/trash_provider.dart';
+import '../domain/inbox_datasource.dart';
 
 class InboxNotifier extends AsyncNotifier<List<Email>> {
   @override
@@ -34,9 +36,16 @@ class InboxNotifier extends AsyncNotifier<List<Email>> {
     state = AsyncData([for (final e in emails) if (e.id == id) updated else e]);
   }
 
-  Future<void> deleteEmail(String id) async {
-    await ref.read(inboxDatasourceProvider).deleteEmail(id);
+  /// Moves the email to Trash and removes it from inbox state.
+  Future<void> moveToTrash(String id) async {
     final emails = state.valueOrNull ?? [];
+    final target = emails.whereType<EmailModel>().cast<EmailModel?>().firstWhere(
+          (e) => e?.id == id,
+          orElse: () => null,
+        );
+    if (target != null) {
+      await ref.read(trashProvider.notifier).moveToTrash(target);
+    }
     state = AsyncData(emails.where((e) => e.id != id).toList());
   }
 }

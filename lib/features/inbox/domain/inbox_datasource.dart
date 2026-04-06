@@ -12,6 +12,8 @@ class EmailModel extends Email {
     required super.body,
     required super.timestamp,
     super.isRead,
+    super.isTrashed,
+    super.trashedAt,
   });
 
   EmailModel copyWithRead({required bool isRead}) => EmailModel(
@@ -23,6 +25,22 @@ class EmailModel extends Email {
         body: body,
         timestamp: timestamp,
         isRead: isRead,
+        isTrashed: isTrashed,
+        trashedAt: trashedAt,
+      );
+
+  EmailModel copyWithTrashed({required bool isTrashed, DateTime? trashedAt}) =>
+      EmailModel(
+        id: id,
+        sender: sender,
+        senderEmail: senderEmail,
+        subject: subject,
+        preview: preview,
+        body: body,
+        timestamp: timestamp,
+        isRead: isRead,
+        isTrashed: isTrashed,
+        trashedAt: trashedAt,
       );
 
   Map<String, dynamic> toJson() => {
@@ -34,6 +52,8 @@ class EmailModel extends Email {
         'body': body,
         'timestamp': timestamp.millisecondsSinceEpoch,
         'isRead': isRead,
+        'isTrashed': isTrashed,
+        'trashedAt': trashedAt?.millisecondsSinceEpoch,
       };
 
   factory EmailModel.fromJson(Map<String, dynamic> json) => EmailModel(
@@ -45,6 +65,10 @@ class EmailModel extends Email {
         body: json['body'] as String,
         timestamp: DateTime.fromMillisecondsSinceEpoch(json['timestamp'] as int),
         isRead: json['isRead'] as bool? ?? false,
+        isTrashed: json['isTrashed'] as bool? ?? false,
+        trashedAt: json['trashedAt'] != null
+            ? DateTime.fromMillisecondsSinceEpoch(json['trashedAt'] as int)
+            : null,
       );
 }
 

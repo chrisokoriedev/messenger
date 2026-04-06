@@ -11,6 +11,7 @@ class AppRoutes {
   static const String inbox   = '/app/inbox';
   static const String sent    = '/app/sent';
   static const String drafts  = '/app/drafts';
+  static const String trash   = '/app/trash';
   static const String profile = '/app/profile';
 
   // Full-screen flows
@@ -24,6 +25,7 @@ class AppRouteNames {
   static const String inbox       = 'inbox';
   static const String sent        = 'sent';
   static const String drafts      = 'drafts';
+  static const String trash       = 'trash';
   static const String profile     = 'profile';
   static const String emailDetail = 'email-detail';
   static const String compose     = 'compose';

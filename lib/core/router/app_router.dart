@@ -11,6 +11,7 @@ import '../../features/inbox/view/inbox_screen.dart';
 import '../../features/inbox/view/sent_screen.dart';
 import '../../features/inbox/view/drafts_screen.dart';
 import '../../features/inbox/view/email_detail_screen.dart';
+import '../../features/trash/view/trash_screen.dart';
 import '../../features/compose/view/compose_screen.dart';
 import '../../core/domain/email.dart';
 
@@ -85,6 +86,16 @@ final List<RouteBase> _routes = [
             path: AppRoutes.drafts,
             name: AppRouteNames.drafts,
             builder: (context, state) => const DraftsScreen(),
+          ),
+        ],
+      ),
+
+      StatefulShellBranch(
+        routes: [
+          GoRoute(
+            path: AppRoutes.trash,
+            name: AppRouteNames.trash,
+            builder: (context, state) => const TrashScreen(),
           ),
         ],
       ),

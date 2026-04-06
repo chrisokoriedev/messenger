@@ -33,8 +33,17 @@ class _EmailDetailScreenState extends ConsumerState<EmailDetailScreen> {
   }
 
   Future<void> _delete() async {
-    await ref.read(inboxProvider.notifier).deleteEmail(widget.email.id);
-    if (mounted) context.pop();
+    await ref.read(inboxProvider.notifier).moveToTrash(widget.email.id);
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Moved to Trash'),
+          behavior: SnackBarBehavior.floating,
+          duration: Duration(seconds: 2),
+        ),
+      );
+      context.pop();
+    }
   }
 
   void _reply() {
@@ -76,6 +85,7 @@ class _EmailDetailScreenState extends ConsumerState<EmailDetailScreen> {
             onPressed: _reply,
           ),
           IconButton(
+            tooltip: 'Move to trash',
             icon: const Icon(Icons.delete_outline_rounded),
             onPressed: _delete,
           ),

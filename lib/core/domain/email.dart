@@ -7,6 +7,8 @@ class Email {
   final String body;
   final DateTime timestamp;
   final bool isRead;
+  final bool isTrashed;
+  final DateTime? trashedAt;
 
   const Email({
     required this.id,
@@ -17,6 +19,8 @@ class Email {
     required this.body,
     required this.timestamp,
     this.isRead = false,
+    this.isTrashed = false,
+    this.trashedAt,
   });
 
   Email copyWith({
@@ -28,6 +32,8 @@ class Email {
     String? body,
     DateTime? timestamp,
     bool? isRead,
+    bool? isTrashed,
+    DateTime? trashedAt,
   }) {
     return Email(
       id: id ?? this.id,
@@ -38,6 +44,8 @@ class Email {
       body: body ?? this.body,
       timestamp: timestamp ?? this.timestamp,
       isRead: isRead ?? this.isRead,
+      isTrashed: isTrashed ?? this.isTrashed,
+      trashedAt: trashedAt ?? this.trashedAt,
     );
   }
 }

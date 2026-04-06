@@ -44,12 +44,51 @@ class InboxScreen extends ConsumerWidget {
                 : SliverList(
                     delegate: SliverChildBuilderDelegate((context, index) {
                       final email = emails[index];
-                      return EmailListTile(
-                        email: email,
-                        onTap: () {
-                          ref.read(inboxProvider.notifier).markRead(email.id);
-                          context.push(AppRoutes.emailDetail, extra: email);
+                      return Dismissible(
+                        key: Key(email.id),
+                        direction: DismissDirection.endToStart,
+                        background: Container(
+                          color: AppColors.brandNavy.withOpacity(0.08),
+                          alignment: Alignment.centerRight,
+                          padding: const EdgeInsets.only(right: 24),
+                          child: const Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.delete_outline_rounded,
+                                  color: AppColors.brandNavy, size: 22),
+                              SizedBox(width: 6),
+                              Text(
+                                'Trash',
+                                style: TextStyle(
+                                  color: AppColors.brandNavy,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        onDismissed: (_) async {
+                          await ref
+                              .read(inboxProvider.notifier)
+                              .moveToTrash(email.id);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Moved to Trash'),
+                              behavior: SnackBarBehavior.floating,
+                              duration: Duration(seconds: 2),
+                            ),
+                          );
                         },
+                        child: EmailListTile(
+                          email: email,
+                          onTap: () {
+                            ref
+                                .read(inboxProvider.notifier)
+                                .markRead(email.id);
+                            context.push(AppRoutes.emailDetail,
+                                extra: email);
+                          },
+                        ),
                       );
                     }, childCount: emails.length),
                   ),
